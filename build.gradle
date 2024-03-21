@@ -35,6 +35,11 @@ dependencies {
     implementation 'com.warrenstrange:googleauth:1.4.0'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework:spring-context-support'
+    // 타임리프(이메일 내용 화면)
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'

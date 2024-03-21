@@ -1,8 +1,11 @@
 package com.example.springjwt.jwt;
 
 import com.example.springjwt.dto.CustomUserDetails;
+import com.example.springjwt.dto.LoginHistoryDTO;
+import com.example.springjwt.entity.LoginHistoryEntity;
 import com.example.springjwt.entity.RefreshEntity;
 import com.example.springjwt.repository.RefreshRepository;
+import com.example.springjwt.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +18,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -23,13 +27,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
+    private final CustomUserDetailsService userDetailsService;
     private RefreshRepository refreshRepository;
 
-    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, RefreshRepository refreshRepository) {
+    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, RefreshRepository refreshRepository, CustomUserDetailsService userDetailsService) {
 
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.refreshRepository = refreshRepository;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -65,8 +71,29 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws UnknownHostException {
+        System.out.println("Authentication failed :: " + failed.getMessage());
+        System.out.println("Authentication failed :: " + failed);
+        if (failed.getMessage().equals("사용자 계정이 잠겨 있습니다.")) {
+            response.setStatus(423);
+            return;
+        }
 
+        String username = obtainUsername(request);
+        LoginHistoryDTO historyDTO = new LoginHistoryDTO();
+        LoginHistoryEntity loginHistory = new LoginHistoryEntity(
+                username,
+                historyDTO.getLoginDt(),
+                "N"
+        );
+        userDetailsService.createLoginHistory(loginHistory);
+
+        long loginFailCnt = userDetailsService.findByFailCnt(username);
+        userDetailsService.updateFailCnt(username, loginFailCnt+1);
+
+        if (loginFailCnt > 4) {
+            userDetailsService.updateLockYn(username, "Y");
+        }
         response.setStatus(401);
     }
 

@@ -12,6 +12,9 @@ public class UserDTO {
     private long failCnt;
     private String lockYn;
     private String googleOtp;
+    private String ccNo;
+    private String repBirthDt;
+    private String email;
     private String role;
 
     public static UserDTO toMemberDTO(UserEntity userEntity) {
@@ -21,6 +24,9 @@ public class UserDTO {
         userDTO.setLockYn(userEntity.getLockYn());
         userDTO.setFailCnt(userEntity.getFailCnt());
         userDTO.setGoogleOtp(userEntity.getGoogleOtp());
+        userDTO.setCcNo(userEntity.getCcNo());
+        userDTO.setRepBirthDt(userEntity.getRepBirthDt());
+        userDTO.setEmail(userEntity.getEmail());
         userDTO.setRole(userEntity.getRole());
         return userDTO;
     }

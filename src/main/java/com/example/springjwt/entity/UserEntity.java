@@ -27,5 +27,20 @@ public class UserEntity {
     @Column(length = 50)
     private String googleOtp;
 
+    @Column(length = 20)
+    private String ccNo;
+
+    @Column(length = 20)
+    private String repBirthDt;
+
+    @Column(length = 100)
+    private String email;
+
     private String role;
+
+    @Column(length = 2)
+    private String pwReissueYn;
+
+    @Transient
+    private String temporaryPw;
 }

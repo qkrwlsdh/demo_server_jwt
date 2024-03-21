@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 public class CustomUserDetails  implements UserDetails {
 
@@ -70,7 +71,7 @@ public class CustomUserDetails  implements UserDetails {
     @Override
     public boolean isAccountNonLocked() {
 
-        return true;
+        return Objects.equals(userEntity.getLockYn(), "Y") ? false : true;
     }
 
     @Override

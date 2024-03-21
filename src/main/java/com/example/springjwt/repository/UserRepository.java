@@ -16,4 +16,31 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
             " FROM TUSER" +
             " WHERE LOGIN_ID = :loginId", nativeQuery = true)
     String findByGoogleOtp(@Param(value = "loginId") String loginId);
+
+    @Query(value =  " SELECT" +
+            " FAIL_CNT" +
+            " FROM TUSER" +
+            " WHERE LOGIN_ID = :loginId", nativeQuery = true)
+    long findByFailCnt(@Param(value = "loginId") String username);
+
+    @Query(value = " SELECT" +
+            " *" +
+            " FROM TUSER" +
+            " WHERE CC_NO = :ccNo" +
+            " AND REP_BIRTH_DT = :repBirthDt", nativeQuery = true)
+    UserEntity findByUser(@Param(value = "ccNo") String ccNo,@Param(value = "repBirthDt") String repBirthDt);
+
+    @Query(value = " SELECT" +
+            " *" +
+            " FROM TUSER" +
+            " WHERE CC_NO = :ccNo" +
+            " AND REP_BIRTH_DT = :repBirthDt" +
+            " AND LOGIN_ID = :username", nativeQuery = true)
+    UserEntity findByUserPw(@Param(value = "ccNo") String ccNo,@Param(value = "repBirthDt") String repBirthDt, @Param(value = "username") String username);
+
+    @Query(value = " SELECT" +
+            " PW_REISSUE_YN" +
+            " FROM TUSER" +
+            " WHERE LOGIN_ID = :loginId", nativeQuery = true)
+    String findByPwReissueYn(@Param(value = "loginId") String loginId);
 }
