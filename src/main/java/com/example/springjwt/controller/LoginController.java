@@ -100,7 +100,7 @@ public class LoginController {
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
             response.setStatus(status.value());
-            log.error("Error while finding user", e);
+            log.error("Error while finding user ID", e);
         }
     }
 
@@ -121,7 +121,7 @@ public class LoginController {
         } catch (Exception e) {
             status = HttpStatus.BAD_REQUEST;
             response.setStatus(status.value());
-            log.error("Error while finding user", e);
+            log.error("Error while finding user PW", e);
         }
     }
 

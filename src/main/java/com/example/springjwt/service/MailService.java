@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
@@ -30,13 +31,15 @@ public class MailService {
 
         MimeMessage message = javaMailSender.createMimeMessage();
 
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true, "UTF-8"); // use multipart (true)
+//        mimeMessageHelper.setCc("ykkang@bankedin.io");
+
         message.addRecipients(MimeMessage.RecipientType.TO, to);    // 보내는 대상
         if (type.equals("id")) {
             message.setSubject("아이디 찾기 결과");
         } else if (type.equals("pw")) {
             message.setSubject("임시 비밀번호 발급 결과");
         }
-
         message.setText(setContext(content, type), "utf-8", "html");  // 내용, charset타입, subtype
         message.setFrom(new InternetAddress(id,"Bankedin_admin")); //보내는 사람의 메일 주소, 보내는 사람 이름
 
@@ -66,12 +69,12 @@ public class MailService {
         MimeMessage 객체 안에 내가 전송할 메일의 내용을 담아준다.
         bean으로 등록해둔 javaMailSender 객체를 사용하여 이메일 send
      */
-    public String sendSimpleMessage(String to, String content, String type)throws Exception {
+    public String sendSimpleMessage(String to, String content, String type) throws Exception {
         MimeMessage message = createMessage(to, content, type);
         try{
             javaMailSender.send(message); // 메일 발송
         }catch(MailException es){
-            es.printStackTrace();
+            log.error("javaMailSender Process Failed", es);
             throw new IllegalArgumentException();
         }
         return content; // 메일로 보냈던 인증 코드를 서버로 리턴
